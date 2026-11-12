@@ -22,11 +22,17 @@ automated. If any requested case is not Approved, **stop and tell the human**.
 2. **Register tags.** Make sure each feature tag from the `.md` exists in `src/helpers/tags.ts`. Add it if
    missing (the human already approved the name in the `.md`).
 3. **Inspect the live app** with a snapshot for every page/component you touch, so locators are real.
-   Prefer `getByRole`/`getByLabel`.
-4. **Write the POM** as two files each: `*.locators.ts` (locators only) and `*.page.ts` /
+   Prefer `getByRole`/`getByLabel`. If a banner or popup that can appear on any page blocks you, add
+   it to `GlobalOverlaysComponent` (CLAUDE.md section 3.1), never to a page object or spec.
+   Never assert on public-page UI (builder-made header/menus); use the app-owned dashboards.
+4. **Write the POM.** Every controller method confirms its own action before it returns (wait for the
+   response, URL or element that proves it; throw otherwise), so the spec only asserts the case's
+   Expected result. Write the POM as two files each: `*.locators.ts` (locators only) and `*.page.ts` /
    `*.component.ts` (controller, no raw selectors, no `expect`).
 5. **Write data factories** in `src/helpers/data/` using `@faker-js/faker`. Specs never call faker directly.
 6. **Write the spec** `<feature>.spec.ts` next to `test-cases/`.
+   - Group tests with `test.describe("<Feature>")` then `test.describe("<Group>")` using each case's
+     `Group` field (CLAUDE.md section 4.4).
    - One `test()` per case in the `.md`. Title `TC-<ID>: <title>`.
    - Tags via `Tag.*` from `src/helpers/tags.ts`: suites + role + polarity + **all feature tags**.
    - Data created in the test or fixture, unique, cleaned up.
@@ -40,6 +46,9 @@ automated. If any requested case is not Approved, **stop and tell the human**.
     review before anything else is generated.
 
 ## Hard rules
+- Import `{ test, expect }` from `@/fixtures`. Login/logout specs go in `src/tests/auth/`; specs under
+  `owner/` and `student/` never log out.
+- No `//` comments. Every object with 1+ properties is multiline.
 - Imports are absolute `@/...` (never `../`). Double quotes, semicolons, arrow functions only, `Array<T>`, `interface` over `type`, no `any`.
 - No `waitForTimeout`, no `.only`, no XPath, no hardcoded credentials or URLs, no raw tag strings.
 - If a case cannot be automated as written, stop and report. Do not change its meaning.

@@ -2,7 +2,16 @@
   "mcpServers": {
     "playwright": {
       "command": "cmd",
-      "args": ["/c", "pnpm", "exec", "playwright-mcp", "--browser", "chromium"]
+      "args": [
+        "/c",
+        "pnpm",
+        "exec",
+        "playwright-mcp",
+        "--browser",
+        "chromium",
+        "--storage-state",
+        "playwright/.auth/owner.json"
+      ]
     }
   }
 }

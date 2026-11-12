@@ -22,14 +22,16 @@ Output file: `src/tests/<role>/<feature>/test-cases/<feature>.md`, from
    places so tests there can carry the same tag. The human confirms the final tag names.
 3. **Explore the real app.** Use the Playwright browser tools to open `SITE_URL` (from `.env`),
    log in as the right role, and take snapshots. Note actual labels, validations and messages.
-   Never invent behaviour.
+   Never invent behaviour. Note any popup/banner/modal that can appear on multiple pages and
+   flag it so the generator registers it as a global overlay. Never use public-page UI (builder-made
+   header/menus) as an expected result; use the app-owned dashboards.
 4. **Select tests with risk-based thinking.** Include only:
    - the main happy path (positive)
    - the validations and failure paths that would hurt users or data if broken (negative),
      e.g. required fields, invalid input, permission boundaries, duplicate handling
    Skip cosmetic checks, trivial variants and anything already covered. Aim for about
    3 to 8 cases per feature. Fewer is fine.
-5. **Write the single .md** with a Summary table and one section per case, all `status: Draft`.
+5. **Assign each case a Group** (Functional / UI / Validation / Access Control) and write the single .md with a Summary table and one section per case, all `status: Draft`.
    Only the 1 or 2 most critical cases get `smoke`; most get `regression`. Where data is needed,
    reference faker factories (`buildStudent()`), never literal personal data.
 6. **STOP and present.** Show the human the Summary table plus, for each case, one line on why it is

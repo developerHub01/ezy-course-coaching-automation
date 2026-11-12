@@ -13,14 +13,25 @@ Every human and every AI agent working here MUST follow this file.
 
 1. **Discuss before executing.** Never write or run a spec until its test-case `.md`
    has been shown to the human and explicitly approved.
-2. **Core tests only.** Cover crucial **positive** and **negative** behaviour. No exhaustive
+2. **Do only what was asked.** No extra scenarios, fixtures or abstractions that were not requested.
+   If something extra seems valuable, propose it and wait.
+3. **Browsers are always visible.** Every browser an agent or script opens (probes, exploration, test
+   runs) is headed (`headless: false`, with a small `slowMo` for probes) so the human can watch. Never
+   run a hidden browser unless the human asks. Say before each run that a browser is about to open.
+4. **Core tests only.** Cover crucial **positive** and **negative** behaviour. No exhaustive
    permutations, no cosmetic checks, no duplicate cases.
-3. **Explain as you go.** The human is not a senior SDET. Briefly say *why* a
+5. **Explain as you go.** The human is not a senior SDET. Briefly say *why* a
    structure or choice was made.
-4. **Never guess selectors.** Inspect the live page (snapshot) before writing a locator.
-5. **Never hardcode secrets.** Credentials come from `.env` via the env helper. Never print, log or commit them.
-6. **Never silence a failure** (`test.skip`, `.only`, weaker assertion, `waitForTimeout`) to make a test pass.
+6. **Never guess selectors.** Inspect the live page (snapshot) before writing a locator.
+7. **Never hardcode secrets.** Credentials come from `.env` via the env helper. Never print, log or commit them.
+8. **Never silence a failure** (`test.skip`, `.only`, weaker assertion, `waitForTimeout`) to make a test pass.
    If the app is wrong, report a bug. If the test is wrong, fix the test.
+9. **Never trust public pages.** EzyCourse sites are made with a website builder, so menus, headers,
+   buttons (even "Login" or "Logout") and banners on public pages can be anything. Assert only in
+   app-owned areas: owner `/en/dashboard/`, student `/en/student/dashboard/`.
+10. **The app is slow.** Navigation and actions may take a long time and that is acceptable. Use the
+   generous timeouts from the config, wait on real signals, never add fixed sleeps, and never call
+   slowness a bug.
 
 ---
 
@@ -39,13 +50,17 @@ src/                          ALL project code lives here (alias: "@/" = src/)
     <name>/                   toast, confirm dialog, pagination, search box ...)
       <name>.locators.ts      Same two-file split as pages
       <name>.component.ts     Controller for the component
-  fixtures/                   Custom Playwright fixtures (page objects, roles, data)
+    global-overlays/          Project-wide banners/modals (cookie consent ...). See section 3.1
+  fixtures/                   Custom Playwright fixtures. Every spec imports
+    index.ts                  `{ test, expect } from "@/fixtures"` (registers global overlays).
+                              Also one fixture per page object
   helpers/
     env.ts                    Typed access to .env
     tags.ts                   Tag registry (single source of truth for every tag)
     data/                     Faker-based data factories
   tests/
     setup/                    auth.setup.ts (log in once per role, save session)
+    auth/<feature>/           Tests that START LOGGED OUT (login ...). Playwright project "auth"
     owner/<feature>/
       <feature>.spec.ts
       test-cases/
@@ -101,11 +116,50 @@ export class StudentListPage extends BasePage {
 
 Rules:
 - Tests call **controller methods**; they never use raw selectors.
-- Assertions (`expect`) live in the **spec**, not in page objects or components. Controllers may
-  expose read methods (`getTitle()`) or locators for the spec to assert on.
+- **Judge everything from the UI, never from the API.** Pass or fail is decided by what the user
+  sees (page, URL, element, toast). Tests and controllers do not assert on API responses or status
+  codes. The client works with the UI, so the test does too.
+- **Controllers confirm their own actions.** A controller method does not return until its action
+  has visibly worked: it waits for the response, URL or element that proves it, and throws a clear
+  error otherwise (for example `login()` waits until the browser has left the login page).
+  Specs never re-check that an action happened as a step between actions; they assert only the
+  test case's **Expected result**. Controllers use waits (`waitFor`, `waitForURL`,
+  `waitForResponse`); `expect` stays in the spec. Pages that can be visited in more than one way
+  offer `open()` (navigate only) and `openSignedIn()` (navigate, then wait until ready).
 - Locator priority: `getByRole` > `getByLabel` > `getByPlaceholder` > `getByText` >
   `getByTestId` > CSS. XPath is forbidden. No positional selectors (`nth`) unless unavoidable.
 - No `page.waitForTimeout`. Use web-first assertions and auto-waiting.
+
+### 3.1 Global overlays (cookie banner, promo modal, ...)
+
+Banners and modals in EzyCourse are **project-wide**: they can appear on any page, including pages
+built with the website builder. They are never handled inside a page object.
+
+- They live in `src/components/global-overlays/` as a list of `{ name, locator, dismiss }`.
+- `GlobalOverlaysComponent.register()` calls Playwright's `page.addLocatorHandler` for each, so the
+  overlay is dismissed automatically whenever it blocks an action.
+- The shared fixture in `src/fixtures/index.ts` registers them on every `page`. Every spec and
+  setup file imports `test` and `expect` from `@/fixtures`, never from `@playwright/test`.
+- A new overlay is added to that one list only.
+- **Any popup, banner or modal that can appear on more than one page belongs here**, in the same way as
+  the cookie banner (consent notices, promo or announcement popups, onboarding tours, newsletter
+  pop-ups, "what's new" dialogs). When an agent sees one while exploring or a test is blocked by
+  one, it must add it to the list instead of dismissing it inside a page object or spec.
+- Do NOT add dialogs a test opens on purpose (for example "Create coaching" or a delete
+  confirmation). Those are components used by that feature's page object.
+
+---
+
+### 3.2 Sessions, login and logout
+
+- Specs under `owner/` and `student/` reuse the saved session and must never log out. Logging out
+  could end the shared session for every other test.
+- Anything that logs in or out lives under `src/tests/auth/` (project `auth`) and signs in itself
+  in a fresh context.
+- Owner and student menus are different UIs: both open from the top-right avatar
+  (`img "User profile picture"`), but the owner dropdown item is `listitem "Logout"` and the
+  student one is a different list. Page objects use role locators on the dashboard's own menu.
+  The site-builder header also contains hidden "Logout" links, so never use `getByText("Logout")`.
 
 ---
 
@@ -131,7 +185,7 @@ test(
 | Kind | Examples | Rule |
 |---|---|---|
 | **Suite** | `@smoke` `@sanity` `@regression` `@feature` `@e2e` | at least one |
-| **Role** | `@owner` `@student` | exactly one (two for e2e journeys) |
+| **Role** | `@owner` `@student` `@guest` | exactly one (two for e2e journeys). `@guest` = logged-out visitor |
 | **Polarity** | `@positive` `@negative` | exactly one |
 | **Feature** | `@student-management` `@student-deletion` `@coaching-session` ... | at least one |
 
@@ -174,6 +228,35 @@ Adding a new feature tag:
 
 Title format: `TC-<AREA>-<NNN>: <behaviour in plain English>` (matches the ID in the `.md`).
 
+### 4.4 Spec structure: grouped with `test.describe`
+
+Every spec groups its tests, never a flat list. The outer `describe` is the feature name; inside it
+each test sits in a group describing what kind of check it is:
+
+| Group | What goes in it |
+|---|---|
+| `Functional` | Behaviour and business flows (the main positive and negative flows) |
+| `UI` | What is shown: layout, labels, visibility, states |
+| `Validation` | Input rules and error messages |
+| `Access Control` | Who may or may not reach something (permissions, redirects, sessions) |
+
+Other groups may be added only when the human approves the name. Each case in the test-case `.md`
+carries a `Group` field, and the spec puts that test in that group:
+
+```ts
+test.describe("Login", () => {
+  test.describe("Functional", () => {
+    test("TC-AUTH-001: ...", { tag: [...] }, async ({ loginPage }) => {
+      // ...
+    });
+  });
+
+  test.describe("Validation", () => {
+    // ...
+  });
+});
+```
+
 ---
 
 ## 5. Test case `.md` file (one per spec)
@@ -182,7 +265,8 @@ Use `.claude/templates/test-cases.template.md`. Location:
 `src/tests/<role>/<feature>/test-cases/<feature>.md`.
 
 The file has a header (feature, role, feature tags, overall status) and **one section per test case**.
-Each case carries: `id`, `title`, `type` (positive/negative), `suites`, `feature tags`, `priority`,
+Each case carries: `id`, `title`, `type` (positive/negative), `group` (Functional/UI/Validation/
+Access Control), `suites`, `feature tags`, `priority`,
 `status`, steps, expected result, data, cleanup.
 
 Per-case `status` lifecycle: `Draft` -> `Approved` (human says so) -> `Automated`.
@@ -192,20 +276,51 @@ Per-case `status` lifecycle: `Draft` -> `Approved` (human says so) -> `Automated
 
 ## 6. Code style (strict)
 
-1. **Always double quotes `""`** for strings. Never single quotes. (Backticks only for template literals.)
-2. **Always end statements with a semicolon `;`.**
-3. **Arrow functions only.** No `function` declarations or expressions. Class methods may be written
+1. **Comments: never `//`.** Use `/* short note */` on one line when brief. For detailed or
+   section-style notes use a multiline block with a `*` at the start of every line:
+
+   ```ts
+   /*
+    * Why this exists, in a few lines.
+    * Each line starts with a star.
+    */
+   ```
+2. **Multiline objects, always.** Every object literal with at least one property is broken down
+   one property per line, like formatted JSON, even when it has a single property. Only the empty
+   object `{}` and destructuring patterns (`({ page }) => ...`) stay on one line.
+
+   ```ts
+   await page.context().storageState({
+     path: AUTH_PATHS.owner,
+   });
+
+   this.page.getByRole("button", {
+     name: "Sign In",
+     exact: true,
+   });
+   ```
+3. **Always double quotes `""`** for strings. Never single quotes. (Backticks only for template literals.)
+4. **Always end statements with a semicolon `;`.**
+5. **Arrow functions only.** No `function` declarations or expressions. Class methods may be written
    as arrow-function properties.
-4. **Single-expression bodies skip `{}` and `return`:**
+6. **No braces around a single one-line statement.** This applies to `if`, `else`, `for` and
+   `while` bodies:
+
+   ```ts
+   if (!ok) throw new Error(`Login failed: API responded with status ${status}.`);
+   ```
+
+   Use braces only when the body is more than one statement or wraps onto several lines.
+7. **Single-expression bodies skip `{}` and `return`:**
    `const fullName = (first: string, last: string): string => `${first} ${last}`;`
    Use `{}` only when the body has more than one statement.
-5. **Arrays:** `Array<string>`, never `string[]`.
-6. **`interface` over `type`** for object shapes and contracts. Use `type` only when an interface
+8. **Arrays:** `Array<string>`, never `string[]`.
+9. **`interface` over `type`** for object shapes and contracts. Use `type` only when an interface
    cannot express it (unions, mapped types, literal unions).
-7. Explicit return types on exported functions and methods.
-8. `import type` for type-only imports. No `any`. Prefer `unknown` plus narrowing.
-9. `const` by default. Descriptive names. No abbreviations (`btn`, `elem`).
-10. One behaviour per test. Tests are independent and may run in parallel.
+10. Explicit return types on exported functions and methods.
+11. `import type` for type-only imports. No `any`. Prefer `unknown` plus narrowing.
+12. `const` by default. Descriptive names. No abbreviations (`btn`, `elem`).
+13. One behaviour per test. Tests are independent and may run in parallel.
 
 Example that follows every rule:
 
@@ -232,10 +347,9 @@ export const buildStudents = (count: number): Array<StudentData> =>
 
 - **Always absolute imports via the `@/` alias**, which maps to `src/` (set in `tsconfig.json`
   `paths` and respected by Playwright). Example: `import { StudentListPage } from "@/pages/students/student-list/student-list.page";`
-- **Never relative imports that climb** (`../../`). A same-folder `./` import is allowed only
-  between a controller and its own locators file.
-- Imports are ordered: external packages, then `@/` imports, then `./` imports. Use `import type`
-  for type-only imports.
+- **Never relative imports at all**: no `../`, and no `./` either, not even for a controller and its
+  own locators file. Enforced by lint.
+- Imports are ordered: external packages, then `@/` imports. Use `import type` for type-only imports.
 
 ---
 

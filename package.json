@@ -4,7 +4,10 @@
   "description": "Playwright automation for the EzyCourse coaching module",
   "scripts": {
     "test": "playwright test",
+    "test:headed": "playwright test --headed --workers=1",
+    "test:slow": "cross-env SLOW_MO=800 playwright test --workers=1",
     "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug --workers=1",
     "test:smoke": "playwright test --grep @smoke",
     "test:sanity": "playwright test --grep @sanity",
     "test:regression": "playwright test --grep @regression",
@@ -32,6 +35,7 @@
     "@playwright/mcp": "0.0.85",
     "@playwright/test": "^1.65.0",
     "@types/node": "^26.6.6",
+    "cross-env": "^10.1.0",
     "dotenv": "^18.0.10",
     "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",

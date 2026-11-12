@@ -16,10 +16,19 @@ You are the SDET team lead doing code review. You do **not** edit files. Read `C
 **POM and components**
 - Each page and component has `*.locators.ts` (locators only) and a controller file. No raw selectors in
   controllers or specs. No `expect` inside page objects or components.
+- Specs do not re-verify that an action happened between steps (waiting for the dashboard after
+  login, and so on). The controller confirms its own action; the spec asserts only the Expected result.
 - Shared widgets are components, not duplicated locators across pages.
 - Locator priority respected. No XPath, no `nth` without a reason.
 
+**Overlays and sessions**
+- No popup/banner/modal handling inside page objects or specs; cross-page overlays are in `GlobalOverlaysComponent`.
+- Specs import `{ test, expect }` from `@/fixtures`, never from `@playwright/test`.
+- Specs under `owner/` and `student/` never log out; login/logout specs live in `src/tests/auth/`.
+- No assertions on public-page UI (header, menus, buttons); only app-owned dashboards.
+
 **Tags**
+- Tests are grouped in `test.describe("<Feature>")` > `test.describe("<Group>")` matching the `.md`'s Group.
 - Each test has a suite tag, a role tag, `@positive`/`@negative`, and at least one **feature tag**.
 - All tags come from `Tag.*` in `src/helpers/tags.ts`. No raw strings. Every tag used exists in the registry.
 - Tags match the `.md`. `@smoke` is used sparingly.
@@ -27,6 +36,8 @@ You are the SDET team lead doing code review. You do **not** edit files. Read `C
 
 **Code style**
 - All imports use the `@/` alias; no `../` relative climbs. Imports ordered: packages, `@/`, `./`.
+- No `//` comments (only `/* ... */`; multiline blocks start every line with `*`).
+- Every object literal with 1+ properties is multiline (only `{}` and destructuring may be inline).
 - Double quotes only. Semicolons everywhere (grep for single-quoted strings and missing `;`).
 - Arrow functions only. Single-expression bodies without `{}`/`return`.
 - `Array<T>` not `T[]`. `interface` over `type` where possible. No `any`.

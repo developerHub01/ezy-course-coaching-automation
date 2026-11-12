@@ -3,6 +3,31 @@ import playwright from "eslint-plugin-playwright";
 import prettier from "eslint-config-prettier";
 import tseslint from "typescript-eslint";
 
+/*
+ * Local rule: bans "//" line comments. Use block comments instead (CLAUDE.md section 6).
+ */
+const noLineComments = {
+  meta: {
+    type: "suggestion",
+    schema: [],
+    messages: {
+      noLine: "Use a block comment (/* ... */) instead of a // line comment.",
+    },
+  },
+  create: (context) => ({
+    Program: () => {
+      for (const comment of context.sourceCode.getAllComments()) {
+        if (comment.type === "Line") {
+          context.report({
+            loc: comment.loc,
+            messageId: "noLine",
+          });
+        }
+      }
+    },
+  }),
+};
+
 export default tseslint.config(
   {
     ignores: ["node_modules", "playwright-report", "test-results", "playwright/.auth"],
@@ -19,6 +44,8 @@ export default tseslint.config(
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/explicit-module-boundary-types": "error",
       "arrow-body-style": ["error", "as-needed"],
+      /* No braces around a single one-line statement; braces only when the body spans lines. */
+      curly: ["error", "multi-or-nest"],
       "prefer-arrow-callback": "error",
       "func-style": ["error", "expression"],
       "no-restricted-syntax": [
@@ -38,8 +65,8 @@ export default tseslint.config(
         {
           patterns: [
             {
-              group: ["../*", ".."],
-              message: 'Use the absolute "@/" alias instead of climbing with "../".',
+              group: ["../*", "..", "./*"],
+              message: 'Use the absolute "@/" alias for every import, never "./" or "../".',
             },
           ],
         },
@@ -58,4 +85,33 @@ export default tseslint.config(
     },
   },
   prettier,
+  {
+    /*
+     * Placed after "prettier" on purpose: these formatting rules are kept on because
+     * Prettier preserves objects that are already written multiline.
+     */
+    files: ["src/**/*.ts", "playwright.config.ts"],
+    plugins: {
+      local: {
+        rules: {
+          "no-line-comments": noLineComments,
+        },
+      },
+    },
+    rules: {
+      "local/no-line-comments": "error",
+      "multiline-comment-style": ["error", "starred-block"],
+      "object-curly-newline": [
+        "error",
+        {
+          ObjectExpression: {
+            minProperties: 1,
+            multiline: true,
+            consistent: true,
+          },
+        },
+      ],
+      "object-property-newline": "error",
+    },
+  },
 );

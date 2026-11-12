@@ -1,23 +1,31 @@
-/**
+/*
  * Tag registry: the single source of truth for every test tag.
  * Specs must use `Tag.X`, never a raw string (CLAUDE.md section 4).
  */
 export const Tag = {
-  // Suite tags
+  /* Suite tags */
   Smoke: "@smoke",
   Sanity: "@sanity",
   Regression: "@regression",
   Feature: "@feature",
   E2E: "@e2e",
 
-  // Role tags
+  /* Role tags (guest = logged-out visitor) */
   Owner: "@owner",
   Student: "@student",
+  Guest: "@guest",
 
-  // Polarity tags
+  /* Polarity tags */
   Positive: "@positive",
   Negative: "@negative",
 
-  // Feature tags: added here, with the human's approval, as features get covered.
-  // Example: StudentManagement: "@student-management",
+  /*
+   * Feature tags: added here, with the human's approval, as features get covered.
+   * Tag by what a test exercises, so `pnpm tag @login` runs it wherever login is used.
+   */
+  Authentication: "@authentication",
+  Login: "@login",
+  Logout: "@logout",
+  Session: "@session",
+  Authorization: "@authorization",
 } as const;

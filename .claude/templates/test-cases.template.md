@@ -31,6 +31,7 @@ Priority: P1 = crucial, P2 = important.
 ## TC-STU-001: <title>
 
 - **Type:** positive
+- **Group:** Functional  (Functional / UI / Validation / Access Control)
 - **Suites:** smoke, regression
 - **Feature tags:** student-management
 - **Priority:** P1
