@@ -19,16 +19,18 @@ export class SelectDropdownComponent {
   };
 
   /*
-   * For long lists that only render the first few items (for example the site pages). The text is
-   * typed into the select first, so the wanted item is in the list before it is clicked.
+   * For long lists that only render the first few items (for example the site pages). The box is
+   * opened, then `searchInput` (the input inside it) gets the text, so the wanted item is in the
+   * list before it is clicked.
    */
   searchAndChoose = async (
-    trigger: Locator,
+    field: Locator,
+    searchInput: Locator,
     optionText: string,
     chosenValue: Locator,
   ): Promise<void> => {
-    await trigger.click();
-    await trigger.fill(optionText);
+    await field.click();
+    await searchInput.fill(optionText);
     await this.pickOption(optionText, chosenValue);
   };
 

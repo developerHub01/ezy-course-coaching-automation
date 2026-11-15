@@ -1,14 +1,16 @@
 import { SHORT_DESCRIPTION_MAX_LENGTH } from "@/components/coaching-program-form/coaching-program-form.component";
 import { expect, test } from "@/fixtures";
 import {
-  DEFAULT_COACHING_INTERNAL_PAGE_SLUG,
+  DEFAULT_AFTER_CHECKOUT_LINK,
+  INTERNAL_AFTER_CHECKOUT_LINK,
+} from "@/helpers/coaching-links";
+import {
   buildCoachingBooking,
   buildCoachingProgram,
   buildExternalAfterCheckout,
   buildInternalAfterCheckout,
 } from "@/helpers/data/coaching-program.factory";
 import type { CoachingType } from "@/helpers/data/coaching-program.factory";
-import { getSiteUrl } from "@/helpers/env";
 import { Tag } from "@/helpers/tags";
 
 /*
@@ -16,11 +18,6 @@ import { Tag } from "@/helpers/tags";
  * Programs created through coachingProgramCreatePage.create() are deleted automatically by the
  * fixture when the test ends, whether it passed or failed.
  */
-
-/* Where a student goes after checkout when the owner sets nothing, and for the test page. */
-const defaultAfterCheckoutLink = new URL("/student/dashboard/coaching-programs", getSiteUrl()).href;
-const internalAfterCheckoutLink = new URL(`/${DEFAULT_COACHING_INTERNAL_PAGE_SLUG}`, getSiteUrl())
-  .href;
 
 interface TypeSettings {
   type: CoachingType;
@@ -307,7 +304,7 @@ test.describe("Coaching program creation", () => {
         await coachingProgramCreatePage.create(data);
 
         await expect(form.internalPageTabSelected()).toBeVisible();
-        await expect(form.afterCheckoutLink(internalAfterCheckoutLink)).toBeVisible();
+        await expect(form.afterCheckoutLink(INTERNAL_AFTER_CHECKOUT_LINK)).toBeVisible();
         await expect(form.resetToDefault()).toBeVisible();
       },
     );
@@ -480,7 +477,7 @@ test.describe("Coaching program creation", () => {
         await formPage.selectCoachingType("Week Based");
 
         await formPage.showSubmissionVisibilityTooltip("All");
-        await expect(form.tooltip()).toHaveText("All students can see each other's submissions.");
+        await expect(form.tooltip()).toHaveText("All students can see each other’s submissions.");
         await formPage.hideTooltip();
 
         await formPage.showSubmissionVisibilityTooltip("Own");
@@ -508,21 +505,21 @@ test.describe("Coaching program creation", () => {
 
         await coachingProgramCreatePage.open();
 
-        await expect(form.afterCheckoutLink(defaultAfterCheckoutLink)).toBeVisible();
+        await expect(form.afterCheckoutLink(DEFAULT_AFTER_CHECKOUT_LINK)).toBeVisible();
         await expect(form.resetToDefault()).toBeHidden();
 
         await formPage.selectInternalPage(buildInternalAfterCheckout().pageTitle);
-        await expect(form.afterCheckoutLink(internalAfterCheckoutLink)).toBeVisible();
+        await expect(form.afterCheckoutLink(INTERNAL_AFTER_CHECKOUT_LINK)).toBeVisible();
         await expect(form.resetToDefault()).toBeVisible();
 
         await formPage.enterExternalUrl(external.url);
         await expect(form.afterCheckoutLink(external.url)).toBeVisible();
 
         await formPage.showInternalPageTab();
-        await expect(form.afterCheckoutLink(internalAfterCheckoutLink)).toBeVisible();
+        await expect(form.afterCheckoutLink(INTERNAL_AFTER_CHECKOUT_LINK)).toBeVisible();
 
         await formPage.resetAfterCheckout();
-        await expect(form.afterCheckoutLink(defaultAfterCheckoutLink)).toBeVisible();
+        await expect(form.afterCheckoutLink(DEFAULT_AFTER_CHECKOUT_LINK)).toBeVisible();
       },
     );
   });

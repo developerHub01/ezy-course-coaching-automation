@@ -4,6 +4,7 @@ import { CoachingProgramFormComponent } from "@/components/coaching-program-form
 import { ConfirmDialogComponent } from "@/components/confirm-dialog/confirm-dialog.component";
 import { ToastComponent } from "@/components/toast/toast.component";
 import { CoachingProgramMessage } from "@/helpers/coaching-program-messages";
+import type { CreatedPrograms } from "@/helpers/created-programs";
 import type { CoachingProgramData } from "@/helpers/data/coaching-program.factory";
 import { BasePage } from "@/pages/base/base.page";
 import { CoachingProgramCreateLocators } from "@/pages/owner/coaching-program-create/coaching-program-create.locators";
@@ -18,22 +19,19 @@ export class CoachingProgramCreatePage extends BasePage {
   readonly form: CoachingProgramFormComponent;
   /* The "Booking Not Enabled" warning shown for a one-to-one program created without booking. */
   readonly bookingWarningDialog: ConfirmDialogComponent;
-  /*
-   * Titles of programs whose creation was submitted. A title is recorded the moment the submit
-   * went through, because from then on the program exists even if a later wait times out. The
-   * fixture deletes every recorded title when the test ends.
-   */
-  readonly submittedTitles: Array<string> = [];
   private readonly toast: ToastComponent;
   private readonly editPage: CoachingProgramEditPage;
 
-  constructor(page: Page) {
+  constructor(
+    page: Page,
+    private readonly createdPrograms: CreatedPrograms,
+  ) {
     super(page);
     this.locators = new CoachingProgramCreateLocators(page);
     this.form = new CoachingProgramFormComponent(page);
     this.bookingWarningDialog = new ConfirmDialogComponent(page);
     this.toast = new ToastComponent(page);
-    this.editPage = new CoachingProgramEditPage(page);
+    this.editPage = new CoachingProgramEditPage(page, createdPrograms);
   }
 
   /* Returns once the create form is on screen. */
@@ -62,7 +60,8 @@ export class CoachingProgramCreatePage extends BasePage {
     await this.form.locators.createButton().click();
     if (data.coachingType === "One to One Coaching" && data.booking === undefined)
       await this.bookingWarningDialog.choose("Continue Anyway");
-    this.submittedTitles.push(data.title);
+    /* From here on the program exists, even if a later wait fails, so it is remembered for cleanup. */
+    this.createdPrograms.add(data.title);
     await this.toast.message(CoachingProgramMessage.created).waitFor({
       state: "visible",
     });

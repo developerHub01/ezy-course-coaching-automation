@@ -3,6 +3,7 @@ import type { Page } from "@playwright/test";
 import { CoachingProgramFormComponent } from "@/components/coaching-program-form/coaching-program-form.component";
 import { ToastComponent } from "@/components/toast/toast.component";
 import { CoachingProgramMessage } from "@/helpers/coaching-program-messages";
+import type { CreatedPrograms } from "@/helpers/created-programs";
 import { waitForInputValue } from "@/helpers/wait-for-input-value";
 import { BasePage } from "@/pages/base/base.page";
 import { CoachingProgramEditLocators } from "@/pages/owner/coaching-program-edit/coaching-program-edit.locators";
@@ -18,7 +19,10 @@ export class CoachingProgramEditPage extends BasePage {
   private readonly toast: ToastComponent;
   private readonly listLocators: CoachingProgramListLocators;
 
-  constructor(page: Page) {
+  constructor(
+    page: Page,
+    private readonly createdPrograms: CreatedPrograms,
+  ) {
     super(page);
     this.locators = new CoachingProgramEditLocators(page);
     this.form = new CoachingProgramFormComponent(page);
@@ -35,10 +39,15 @@ export class CoachingProgramEditPage extends BasePage {
       state: "visible",
     });
     await waitForInputValue(this.form.locators.title(), title);
+    this.createdPrograms.openedTitle = title;
   };
 
-  /* Clicks Update and returns once the success toast is shown and the programs list is on screen. */
+  /*
+   * Clicks Update and returns once the success toast is shown and the programs list is on screen.
+   * If the title was changed, the program is remembered under its new title so it is still deleted.
+   */
   update = async (): Promise<void> => {
+    const newTitle = await this.form.locators.title().inputValue();
     await this.form.locators.updateButton().click();
     await this.toast.message(CoachingProgramMessage.updated).waitFor({
       state: "visible",
@@ -46,12 +55,21 @@ export class CoachingProgramEditPage extends BasePage {
     await this.listLocators.heading().waitFor({
       state: "visible",
     });
+    this.createdPrograms.rename(this.createdPrograms.openedTitle, newTitle);
   };
 
   /* Clicks Update on an invalid form and returns once a validation message is shown. */
   submitExpectingValidationErrors = async (): Promise<void> => {
     await this.form.locators.updateButton().click();
     await this.form.locators.anyValidationMessage().waitFor({
+      state: "visible",
+    });
+  };
+
+  /* Clicks Update on a form the app refuses and returns once its message (a toast) is shown. */
+  submitExpectingMessage = async (message: string): Promise<void> => {
+    await this.form.locators.updateButton().click();
+    await this.toast.message(message).waitFor({
       state: "visible",
     });
   };

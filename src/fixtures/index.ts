@@ -4,6 +4,9 @@ import { GlobalOverlaysComponent } from "@/components/global-overlays/global-ove
 import { OwnerAccountMenuComponent } from "@/components/owner-account-menu/owner-account-menu.component";
 import { StudentAccountMenuComponent } from "@/components/student-account-menu/student-account-menu.component";
 import { ToastComponent } from "@/components/toast/toast.component";
+import { CreatedPrograms } from "@/helpers/created-programs";
+import { buildCoachingProgram } from "@/helpers/data/coaching-program.factory";
+import type { CoachingProgramData } from "@/helpers/data/coaching-program.factory";
 import { LoginPage } from "@/pages/auth/login/login.page";
 import { CoachingProgramCreatePage } from "@/pages/owner/coaching-program-create/coaching-program-create.page";
 import { CoachingProgramEditPage } from "@/pages/owner/coaching-program-edit/coaching-program-edit.page";
@@ -13,6 +16,8 @@ import { StudentDashboardPage } from "@/pages/student/dashboard/student-dashboar
 
 interface ProjectFixtures {
   loginPage: LoginPage;
+  createdPrograms: CreatedPrograms;
+  createProgram: (overrides?: Partial<CoachingProgramData>) => Promise<CoachingProgramData>;
   coachingProgramListPage: CoachingProgramListPage;
   coachingProgramCreatePage: CoachingProgramCreatePage;
   coachingProgramEditPage: CoachingProgramEditPage;
@@ -37,26 +42,46 @@ export const test = base.extend<ProjectFixtures>({
     await use(new LoginPage(page));
   },
 
-  coachingProgramListPage: async ({ page }, use) => {
-    await use(new CoachingProgramListPage(page));
-  },
-
   /*
-   * Deletes every program the test created, after the test, whether it passed or failed. Creating
-   * data on the shared tenant without removing it would leave junk behind for everyone.
+   * Remembers the programs a test created and deletes whatever is left of them after the test,
+   * whether it passed or failed. Creating data on the shared tenant without removing it would leave
+   * junk behind for everyone. The page objects keep the list up to date (a program the test deletes
+   * or renames is not deleted twice).
    */
-  coachingProgramCreatePage: async ({ page }, use) => {
-    const createPage = new CoachingProgramCreatePage(page);
-    await use(createPage);
-    const listPage = new CoachingProgramListPage(page);
-    for (const title of createPage.submittedTitles) {
+  createdPrograms: async ({ page }, use) => {
+    const createdPrograms = new CreatedPrograms();
+    await use(createdPrograms);
+    const listPage = new CoachingProgramListPage(page, createdPrograms);
+    for (const title of [...createdPrograms.titles]) {
       await listPage.open();
       await listPage.deleteProgram(title);
     }
   },
 
-  coachingProgramEditPage: async ({ page }, use) => {
-    await use(new CoachingProgramEditPage(page));
+  coachingProgramListPage: async ({ page, createdPrograms }, use) => {
+    await use(new CoachingProgramListPage(page, createdPrograms));
+  },
+
+  coachingProgramCreatePage: async ({ page, createdPrograms }, use) => {
+    await use(new CoachingProgramCreatePage(page, createdPrograms));
+  },
+
+  coachingProgramEditPage: async ({ page, createdPrograms }, use) => {
+    await use(new CoachingProgramEditPage(page, createdPrograms));
+  },
+
+  /*
+   * Makes a program that the test needs as its starting point (the test is about changing, finding or
+   * deleting it, not about creating it) and returns the data it was made from.
+   */
+  createProgram: async ({ coachingProgramListPage, coachingProgramCreatePage }, use) => {
+    await use(async (overrides = {}) => {
+      const data = buildCoachingProgram(overrides);
+      await coachingProgramListPage.open();
+      await coachingProgramListPage.openCreateForm();
+      await coachingProgramCreatePage.create(data);
+      return data;
+    });
   },
 
   ownerDashboardPage: async ({ page }, use) => {

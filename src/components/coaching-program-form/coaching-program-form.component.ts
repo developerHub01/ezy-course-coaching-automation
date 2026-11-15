@@ -9,6 +9,7 @@ import type {
   CoachingBookingData,
   CoachingProgramData,
   CoachingType,
+  FreeSlotsRenewalCycle,
   SubmissionVisibility,
 } from "@/helpers/data/coaching-program.factory";
 import { waitForInputValue } from "@/helpers/wait-for-input-value";
@@ -47,6 +48,14 @@ export class CoachingProgramFormComponent {
     });
   };
 
+  /* Empties the description and returns once the editor shows no text. */
+  clearDescription = async (): Promise<void> => {
+    await this.locators.descriptionEditor().fill("");
+    await this.locators.descriptionEditorEmpty().waitFor({
+      state: "visible",
+    });
+  };
+
   fillShortDescription = async (shortDescription: string): Promise<void> => {
     await this.locators.shortDescription().fill(shortDescription);
     await waitForInputValue(this.locators.shortDescription(), shortDescription);
@@ -66,7 +75,7 @@ export class CoachingProgramFormComponent {
 
   selectCategory = async (category: string): Promise<void> => {
     await this.selectDropdown.choose(
-      this.locators.categorySelect(),
+      this.locators.categoryField(),
       category,
       this.locators.categoryChosen(category),
     );
@@ -126,6 +135,22 @@ export class CoachingProgramFormComponent {
     await waitForInputValue(this.locators.freeSlotsInput(), String(slots));
   };
 
+  selectRenewalCycle = async (cycle: FreeSlotsRenewalCycle): Promise<void> => {
+    await this.selectRadio(this.locators.renewalCycleRadio(cycle));
+  };
+
+  setAllowAdditionalSessions = async (allowed: boolean): Promise<void> => {
+    await this.locators.allowAdditionalSessionsSwitch().setChecked(allowed);
+  };
+
+  selectAppointment = async (appointment: string): Promise<void> => {
+    await this.selectDropdown.choose(
+      this.locators.appointmentField(),
+      appointment,
+      this.locators.appointmentChosen(appointment),
+    );
+  };
+
   /*
    * Turns booking on and fills its settings. The renewal cycle and the additional-sessions switch
    * only appear once the free slots are above 0, so they are skipped when it is 0.
@@ -134,16 +159,10 @@ export class CoachingProgramFormComponent {
     await this.setBookingEnabled(true);
     await this.setFreeSlots(booking.freeSlots);
     if (booking.freeSlots > 0) {
-      await this.selectRadio(this.locators.renewalCycleRadio(booking.renewalCycle));
-      await this.locators
-        .allowAdditionalSessionsSwitch()
-        .setChecked(booking.allowAdditionalSessions);
+      await this.selectRenewalCycle(booking.renewalCycle);
+      await this.setAllowAdditionalSessions(booking.allowAdditionalSessions);
     }
-    await this.selectDropdown.choose(
-      this.locators.appointmentSelect(),
-      booking.appointment,
-      this.locators.appointmentChosen(booking.appointment),
-    );
+    await this.selectAppointment(booking.appointment);
   };
 
   /* Clicks the Internal Page tab and returns once it is the active tab. */
@@ -168,6 +187,7 @@ export class CoachingProgramFormComponent {
   selectInternalPage = async (pageTitle: string): Promise<void> => {
     await this.showInternalPageTab();
     await this.selectDropdown.searchAndChoose(
+      this.locators.internalPageField(),
       this.locators.internalPageSelect(),
       pageTitle,
       this.locators.internalPageChosen(pageTitle),
@@ -240,6 +260,27 @@ export class CoachingProgramFormComponent {
     await this.gallery.selectItems("Stock images");
     await this.gallery.confirmSelection();
     await this.locators.bannerImagePreview().waitFor({
+      state: "visible",
+    });
+  };
+
+  /* Deletes the feature image and returns once its preview is gone and the upload box is back. */
+  deleteFeatureImage = async (): Promise<void> => {
+    await this.locators.deleteFeatureImageButton().click();
+    await this.locators.featureImagePreview().waitFor({
+      state: "hidden",
+    });
+    await this.locators.featureImageButton().waitFor({
+      state: "visible",
+    });
+  };
+
+  deleteBannerImage = async (): Promise<void> => {
+    await this.locators.deleteBannerImageButton().click();
+    await this.locators.bannerImagePreview().waitFor({
+      state: "hidden",
+    });
+    await this.locators.bannerImageButton().waitFor({
       state: "visible",
     });
   };

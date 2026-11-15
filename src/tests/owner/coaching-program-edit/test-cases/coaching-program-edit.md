@@ -313,7 +313,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 2. Click the back arrow (no Update).
 
 **Expected result**
-- The programs list is shown with no confirmation dialog.
+- The programs list is shown.
 - Searching the original title shows the program, and searching the changed title shows no program.
 
 **Cleanup**

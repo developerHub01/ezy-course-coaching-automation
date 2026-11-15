@@ -1,8 +1,10 @@
 import type { Locator, Page } from "@playwright/test";
 
 import { ConfirmDialogComponent } from "@/components/confirm-dialog/confirm-dialog.component";
+import { SelectDropdownComponent } from "@/components/select-dropdown/select-dropdown.component";
 import { ToastComponent } from "@/components/toast/toast.component";
 import { CoachingProgramMessage } from "@/helpers/coaching-program-messages";
+import type { CreatedPrograms } from "@/helpers/created-programs";
 import { BasePage } from "@/pages/base/base.page";
 import { CoachingProgramCreatePage } from "@/pages/owner/coaching-program-create/coaching-program-create.page";
 import { CoachingProgramEditPage } from "@/pages/owner/coaching-program-edit/coaching-program-edit.page";
@@ -16,17 +18,22 @@ import { CoachingProgramListLocators } from "@/pages/owner/coaching-program-list
 export class CoachingProgramListPage extends BasePage {
   readonly locators: CoachingProgramListLocators;
   readonly deleteDialog: ConfirmDialogComponent;
+  private readonly selectDropdown: SelectDropdownComponent;
   private readonly toast: ToastComponent;
   private readonly createPage: CoachingProgramCreatePage;
   private readonly editPage: CoachingProgramEditPage;
 
-  constructor(page: Page) {
+  constructor(
+    page: Page,
+    private readonly createdPrograms: CreatedPrograms,
+  ) {
     super(page);
     this.locators = new CoachingProgramListLocators(page);
     this.deleteDialog = new ConfirmDialogComponent(page);
+    this.selectDropdown = new SelectDropdownComponent(page);
     this.toast = new ToastComponent(page);
-    this.createPage = new CoachingProgramCreatePage(page);
-    this.editPage = new CoachingProgramEditPage(page);
+    this.createPage = new CoachingProgramCreatePage(page, createdPrograms);
+    this.editPage = new CoachingProgramEditPage(page, createdPrograms);
   }
 
   /*
@@ -58,6 +65,39 @@ export class CoachingProgramListPage extends BasePage {
     await this.locators.programRow(title).waitFor({
       state: "visible",
     });
+  };
+
+  /* Searches for text that should find nothing and returns once the list shows "Showing results for: <text>". */
+  searchExpectingNoResults = async (text: string): Promise<void> => {
+    await this.locators.searchBox().fill(text);
+    await this.locators.searchResultsLabel(text).waitFor({
+      state: "visible",
+    });
+  };
+
+  /* Chooses a category in the Category filter and returns once the filter shows it. */
+  filterByCategory = async (category: string): Promise<void> => {
+    const filter = this.locators.categoryFilter();
+    await this.selectDropdown.choose(
+      filter,
+      category,
+      this.locators.chosenFilterValue(filter, category),
+    );
+  };
+
+  filterBySessionType = async (sessionType: string): Promise<void> => {
+    const filter = this.locators.sessionTypeFilter();
+    await this.selectDropdown.choose(
+      filter,
+      sessionType,
+      this.locators.chosenFilterValue(filter, sessionType),
+    );
+  };
+
+  /* Clicks Clear Filters and returns once the button is disabled again (no filter is set). */
+  clearFilters = async (): Promise<void> => {
+    await this.locators.clearFiltersButton().click();
+    await this.locators.clearFiltersButton().and(this.page.locator(":disabled")).waitFor();
   };
 
   /* Clicks Add New Program and returns once the create form is on screen. */
@@ -92,6 +132,17 @@ export class CoachingProgramListPage extends BasePage {
     });
     await this.locators.programRow(title).waitFor({
       state: "hidden",
+    });
+    this.createdPrograms.remove(title);
+  };
+
+  /* Starts deleting a program, answers No, and returns once the dialog is closed and the row is still shown. */
+  cancelDeleting = async (title: string): Promise<void> => {
+    await this.openActionMenu(title);
+    await this.locators.menuItem("Delete").click();
+    await this.deleteDialog.choose("No");
+    await this.locators.programRow(title).waitFor({
+      state: "visible",
     });
   };
 }

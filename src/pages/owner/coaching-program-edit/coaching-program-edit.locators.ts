@@ -10,6 +10,12 @@ export class CoachingProgramEditLocators extends BaseLocators {
       level: 1,
     });
 
+  /* A tab of the edit page: Details, Pricing and, for Session Based programs only, Drip. */
+  readonly tab = (name: string): Locator =>
+    this.page.getByRole("navigation").first().getByRole("listitem").filter({
+      hasText: name,
+    });
+
   readonly backButton = (): Locator =>
     this.page.getByRole("button", {
       name: "arrow-left",

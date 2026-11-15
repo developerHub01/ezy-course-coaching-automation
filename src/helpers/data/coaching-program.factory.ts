@@ -15,6 +15,7 @@ export type FreeSlotsRenewalCycle = "One-time" | "Weekly" | "Monthly" | "Yearly"
  */
 export const DEFAULT_COACHING_CATEGORY = "Testing for research";
 export const DEFAULT_COACHING_APPOINTMENT = "Free appoin";
+export const ALTERNATIVE_COACHING_APPOINTMENT = "Test reschedule sync";
 export const DEFAULT_COACHING_INTERNAL_PAGE = "QA After Checkout Test Page (safe to delete)";
 export const DEFAULT_COACHING_INTERNAL_PAGE_SLUG = "qa-after-checkout-test-page-safe-to-delete";
 

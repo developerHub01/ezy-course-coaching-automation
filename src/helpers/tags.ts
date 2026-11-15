@@ -35,6 +35,8 @@ export const Tag = {
    */
   Coaching: "@coaching",
   CoachingProgramCreation: "@coaching-program-creation",
+  CoachingProgramEdit: "@coaching-program-edit",
+  CoachingProgramManagement: "@coaching-program-management",
   CoachingType: "@coaching-type",
   CoachingAccess: "@coaching-access",
   CoachingAfterCheckout: "@coaching-after-checkout",

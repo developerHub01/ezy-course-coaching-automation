@@ -59,6 +59,10 @@ export class CoachingProgramFormLocators extends BaseLocators {
       hasText: text,
     });
 
+  /* The editor, but only while it holds no text (the editor marks its empty paragraph with this class). */
+  readonly descriptionEditorEmpty = (): Locator =>
+    this.descriptionEditor().locator("p.is-editor-empty");
+
   readonly shortDescription = (): Locator =>
     this.page.getByRole("textbox", {
       name: "* Short Description",
@@ -69,16 +73,20 @@ export class CoachingProgramFormLocators extends BaseLocators {
       name: "* Category",
     });
 
+  /*
+   * The visible select box. Clicking it opens the list on both forms. The input inside it is covered
+   * by the saved value on the edit form, so clicking the input only works while nothing is chosen yet.
+   */
+  readonly categoryField = (): Locator =>
+    this.page.locator(".ant-select").filter({
+      has: this.categorySelect(),
+    });
+
   /* Where the Category select shows its current choice. */
   readonly categoryChosen = (category: string): Locator =>
-    this.page
-      .locator(".ant-select")
-      .filter({
-        has: this.categorySelect(),
-      })
-      .getByTitle(category, {
-        exact: true,
-      });
+    this.categoryField().getByTitle(category, {
+      exact: true,
+    });
 
   readonly accessRadio = (access: CoachingAccess): Locator =>
     this.page.getByRole("radio", {
@@ -165,10 +173,28 @@ export class CoachingProgramFormLocators extends BaseLocators {
       "switch",
     );
 
+  /*
+   * Found through the label element itself (exact text). A text match on "Select Appointment" cannot
+   * be used: the select's own placeholder ("Select appointment for this program") contains it too, so
+   * the block found would be the select, not the field around it.
+   */
   private readonly appointmentSection = (): Locator =>
-    this.fieldSection("Select Appointment", this.page.getByRole("combobox"));
+    this.page
+      .locator("div")
+      .filter({
+        has: this.page.getByText("Select Appointment", {
+          exact: true,
+        }),
+      })
+      .filter({
+        has: this.page.getByRole("combobox"),
+      })
+      .last();
 
   readonly appointmentSelect = (): Locator => this.appointmentSection().getByRole("combobox");
+
+  /* The visible select box (see categoryField). */
+  readonly appointmentField = (): Locator => this.appointmentSection().locator(".ant-select");
 
   /* Where the Appointment select shows its current choice. */
   readonly appointmentChosen = (appointment: string): Locator =>
@@ -197,6 +223,16 @@ export class CoachingProgramFormLocators extends BaseLocators {
     this.page.getByRole("img", {
       name: "Banner",
       exact: true,
+    });
+
+  readonly deleteFeatureImageButton = (): Locator =>
+    this.page.getByRole("button", {
+      name: "delete-feature-image-btn",
+    });
+
+  readonly deleteBannerImageButton = (): Locator =>
+    this.page.getByRole("button", {
+      name: "delete-banner-image-btn",
     });
 
   /* ---------- After Checkout Page URL ---------- */
@@ -236,6 +272,10 @@ export class CoachingProgramFormLocators extends BaseLocators {
       name: "External Page",
       selected: true,
     });
+
+  /* The visible select box of the Internal Page tab (see categoryField). */
+  readonly internalPageField = (): Locator =>
+    this.afterCheckoutSection().getByRole("tabpanel").locator(".ant-select");
 
   readonly internalPageSelect = (): Locator =>
     this.afterCheckoutSection().getByRole("tabpanel").getByRole("combobox");
