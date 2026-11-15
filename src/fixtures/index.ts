@@ -5,11 +5,17 @@ import { OwnerAccountMenuComponent } from "@/components/owner-account-menu/owner
 import { StudentAccountMenuComponent } from "@/components/student-account-menu/student-account-menu.component";
 import { ToastComponent } from "@/components/toast/toast.component";
 import { LoginPage } from "@/pages/auth/login/login.page";
+import { CoachingProgramCreatePage } from "@/pages/owner/coaching-program-create/coaching-program-create.page";
+import { CoachingProgramEditPage } from "@/pages/owner/coaching-program-edit/coaching-program-edit.page";
+import { CoachingProgramListPage } from "@/pages/owner/coaching-program-list/coaching-program-list.page";
 import { OwnerDashboardPage } from "@/pages/owner/dashboard/owner-dashboard.page";
 import { StudentDashboardPage } from "@/pages/student/dashboard/student-dashboard.page";
 
 interface ProjectFixtures {
   loginPage: LoginPage;
+  coachingProgramListPage: CoachingProgramListPage;
+  coachingProgramCreatePage: CoachingProgramCreatePage;
+  coachingProgramEditPage: CoachingProgramEditPage;
   ownerDashboardPage: OwnerDashboardPage;
   studentDashboardPage: StudentDashboardPage;
   ownerAccountMenu: OwnerAccountMenuComponent;
@@ -29,6 +35,28 @@ export const test = base.extend<ProjectFixtures>({
 
   loginPage: async ({ page }, use) => {
     await use(new LoginPage(page));
+  },
+
+  coachingProgramListPage: async ({ page }, use) => {
+    await use(new CoachingProgramListPage(page));
+  },
+
+  /*
+   * Deletes every program the test created, after the test, whether it passed or failed. Creating
+   * data on the shared tenant without removing it would leave junk behind for everyone.
+   */
+  coachingProgramCreatePage: async ({ page }, use) => {
+    const createPage = new CoachingProgramCreatePage(page);
+    await use(createPage);
+    const listPage = new CoachingProgramListPage(page);
+    for (const title of createPage.submittedTitles) {
+      await listPage.open();
+      await listPage.deleteProgram(title);
+    }
+  },
+
+  coachingProgramEditPage: async ({ page }, use) => {
+    await use(new CoachingProgramEditPage(page));
   },
 
   ownerDashboardPage: async ({ page }, use) => {

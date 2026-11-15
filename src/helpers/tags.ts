@@ -28,4 +28,15 @@ export const Tag = {
   Logout: "@logout",
   Session: "@session",
   Authorization: "@authorization",
+
+  /*
+   * Coaching feature tags. PROPOSED names, please rename or remove any you do not want.
+   * @coaching-type is on every test that exercises a coaching type, so one command runs them all.
+   */
+  Coaching: "@coaching",
+  CoachingProgramCreation: "@coaching-program-creation",
+  CoachingType: "@coaching-type",
+  CoachingAccess: "@coaching-access",
+  CoachingAfterCheckout: "@coaching-after-checkout",
+  OneToOneBooking: "@one-to-one-booking",
 } as const;

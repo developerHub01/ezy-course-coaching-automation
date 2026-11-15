@@ -5,12 +5,16 @@ import { getSiteUrl } from "@/helpers/env";
 
 export default defineConfig({
   testDir: "./src/tests",
-  /* EzyCourse can be slow (client-rendered, heavy pages), so timeouts are generous on purpose. */
-  timeout: 90_000,
+  /*
+   * EzyCourse can be slow (client-rendered, heavy pages), so timeouts are generous on purpose. With
+   * several workers sharing the one demo tenant, a single page load took over 60 seconds, which
+   * is why these are higher than the usual defaults.
+   */
+  timeout: 240_000,
   expect: {
-    timeout: 20_000,
+    timeout: 30_000,
   },
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
@@ -25,8 +29,8 @@ export default defineConfig({
   ],
   use: {
     baseURL: getSiteUrl(),
-    actionTimeout: 30_000,
-    navigationTimeout: 60_000,
+    actionTimeout: 60_000,
+    navigationTimeout: 180_000,
     /*
      * A failed test keeps a full trace (every step, network call and page snapshot), a video and a
      * screenshot. Open them with `pnpm report`.
@@ -37,13 +41,22 @@ export default defineConfig({
     /* Slows every browser action by this many ms so you can follow along. See `pnpm test:slow`. */
     launchOptions: {
       slowMo: Number(process.env.SLOW_MO ?? 0),
+      args: ["--start-maximized"],
     },
+    /*
+     * The browser window opens maximized. This needs both the flag above and `viewport: null`
+     * (no fixed page size). Each project that spreads a device preset must repeat `viewport: null`
+     * AND clear `deviceScaleFactor`, because the preset sets both and Playwright refuses a null
+     * viewport together with a scale factor.
+     */
+    viewport: null,
     headless: false,
   },
   projects: [
     /*
-     * 1. setup: logs in once per role through the UI and saves the sessions.
-     *    The owner, student and e2e projects wait for it.
+     * 1. setup: makes sure each role has a working saved session. It reuses the saved one while the
+     *    app still accepts it and logs in through the UI only when it does not.
+     *    The owner and student projects wait for it.
      */
     {
       name: "setup",
@@ -57,6 +70,8 @@ export default defineConfig({
       testMatch: /auth\/.*\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
+        viewport: null,
+        deviceScaleFactor: undefined,
       },
     },
     /* 3. owner: reuses the saved owner session. */
@@ -66,6 +81,8 @@ export default defineConfig({
       dependencies: ["setup"],
       use: {
         ...devices["Desktop Chrome"],
+        viewport: null,
+        deviceScaleFactor: undefined,
         storageState: AUTH_PATHS.owner,
       },
     },
@@ -76,6 +93,8 @@ export default defineConfig({
       dependencies: ["setup"],
       use: {
         ...devices["Desktop Chrome"],
+        viewport: null,
+        deviceScaleFactor: undefined,
         storageState: AUTH_PATHS.student,
       },
     },
@@ -89,6 +108,8 @@ export default defineConfig({
       testMatch: /e2e\/.*\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
+        viewport: null,
+        deviceScaleFactor: undefined,
       },
     },
   ],
