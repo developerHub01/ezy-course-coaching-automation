@@ -54,8 +54,7 @@ export default defineConfig({
   },
   projects: [
     /*
-     * 1. setup: makes sure each role has a working saved session. It reuses the saved one while the
-     *    app still accepts it and logs in through the UI only when it does not.
+     * 1. setup: logs in once per role through the UI and saves the sessions.
      *    The owner and student projects wait for it.
      */
     {
@@ -78,7 +77,6 @@ export default defineConfig({
     {
       name: "owner",
       testMatch: /owner\/.*\.spec\.ts/,
-      dependencies: ["setup"],
       use: {
         ...devices["Desktop Chrome"],
         viewport: null,
@@ -90,7 +88,6 @@ export default defineConfig({
     {
       name: "student",
       testMatch: /student\/.*\.spec\.ts/,
-      dependencies: ["setup"],
       use: {
         ...devices["Desktop Chrome"],
         viewport: null,
