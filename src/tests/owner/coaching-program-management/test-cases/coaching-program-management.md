@@ -10,8 +10,8 @@
 | Overall status | Draft |
 
 ## Scope
-What an owner does with programs that already exist, on **Coaching > Coaching Programs**: edit and save,
-delete, search by title, filter, and the row menu. The page objects for all of this already exist
+What an owner does with programs that already exist, on **Coaching > Coaching Programs**: delete, search by title,
+filter, and the row menu. **Editing a program has its own file:** `coaching-program-edit.md`. The page objects for all of this already exist
 (`CoachingProgramListPage`, `CoachingProgramEditPage`), so these cases can be automated without new POM work
 except for the filters and the row menu entries beyond Edit and Delete.
 
@@ -24,60 +24,21 @@ opening them), categories, Library, quiz submissions, the student side.
   `CoachingProgramCreatePage.create()` and delete it in cleanup.
 - Facts come from `docs/product/coaching.md`. Counters and the other 1400+ programs on the shared tenant are
   never asserted.
-- The One to One booking lock is already asserted by TC-COACH-006 in `coaching-program-creation.md`, so it is not
-  repeated here.
+- The One to One booking lock is asserted by TC-COACH-006 in `coaching-program-creation.md`, and the coaching type lock
+  by TC-COACH-210 in `coaching-program-edit.md`, so neither is repeated here.
 
 ## Summary
 
 | ID | Title | Type | Group | Suites | Priority | Status |
 |---|---|---|---|---|---|---|
-| TC-COACH-101 | Owner edits a program and saves the changes | positive | Functional | smoke, regression | P1 | Draft |
 | TC-COACH-102 | Owner deletes a program | positive | Functional | regression | P1 | Draft |
 | TC-COACH-103 | Owner cancels deleting a program | negative | Functional | regression | P1 | Draft |
 | TC-COACH-104 | Owner finds a program by searching its title | positive | Functional | regression | P1 | Draft |
 | TC-COACH-105 | Owner filters programs by category and session type, then clears the filters | positive | Functional | regression | P2 | Draft |
 | TC-COACH-106 | The row menu offers its six actions | positive | UI | regression | P2 | Draft |
-| TC-COACH-111 | Edit rejects an empty Title | negative | Validation | regression | P1 | Draft |
 | TC-COACH-112 | Search with no match shows the empty message | negative | Validation | regression | P2 | Draft |
-| TC-COACH-113 | The coaching type cannot be changed after creation | negative | Validation | regression | P1 | Draft |
 
 Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
-
----
-
-## TC-COACH-101: Owner edits a program and saves the changes
-
-- **Type:** positive
-- **Group:** Functional
-- **Suites:** smoke, regression
-- **Feature tags:** coaching, coaching-program-management
-- **Priority:** P1
-- **Status:** Draft
-- **Objective:** Changes an owner makes to a program must be saved.
-
-**Test data**
-| Field | Value |
-|---|---|
-| Existing program | `buildCoachingProgram({ coachingType: "Week Based" })` created in the test |
-| New title | the old title plus ` EDITED` |
-| New access | **Private** |
-| New student limit | the old limit plus 1 (typed) |
-| New submission visibility | **Own** |
-
-**Steps**
-1. Open the list, search the program's title, open **Edit** from its row menu.
-2. Change the title, access, student limit and submission visibility.
-3. Click **Update**.
-4. Search the list for the new title and open **Edit** again.
-
-**Expected result**
-- After **Update**, the toast "Coaching Program Updated Successfully" is shown and the Coaching Programs list is
-  shown.
-- The row for the new title shows status **PRIVATE**.
-- The edit form holds the new title, student limit, **Private** and **Own**.
-
-**Cleanup**
-- Delete the program from the list (by its new title).
 
 ---
 
@@ -227,36 +188,6 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 
 ---
 
-## TC-COACH-111: Edit rejects an empty Title
-
-- **Type:** negative
-- **Group:** Validation
-- **Suites:** regression
-- **Feature tags:** coaching, coaching-program-management
-- **Priority:** P1
-- **Status:** Draft
-- **Objective:** Editing must not allow a program to lose its title.
-
-**Test data**
-| Field | Value |
-|---|---|
-| Existing program | `buildCoachingProgram()` created in the test |
-
-**Steps**
-1. Open the program's edit form from the list.
-2. Clear the **Title**.
-3. Click **Update**.
-
-**Expected result**
-- The message "Please input the coaching program title!" is shown.
-- The edit form is still shown (the list is not opened).
-- After clicking the back arrow, the list still shows the program under its original title.
-
-**Cleanup**
-- Delete the program from the list.
-
----
-
 ## TC-COACH-112: Search with no match shows the empty message
 
 - **Type:** negative
@@ -278,33 +209,6 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 
 **Cleanup**
 - None.
-
----
-
-## TC-COACH-113: The coaching type cannot be changed after creation
-
-- **Type:** negative
-- **Group:** Validation
-- **Suites:** regression
-- **Feature tags:** coaching, coaching-program-management, coaching-type
-- **Priority:** P1
-- **Status:** Draft
-- **Objective:** Changing the type of a program that already has content and clients would break it, so the app locks it.
-
-**Test data**
-| Field | Value |
-|---|---|
-| Existing program | `buildCoachingProgram({ coachingType: "Week Based" })` created in the test |
-
-**Steps**
-1. Open the program's edit form from the list.
-2. Look at the **Select Coaching Type** options.
-
-**Expected result**
-- All five coaching type options are disabled and **Week Based** is the checked one.
-
-**Cleanup**
-- Delete the program from the list.
 
 ---
 
