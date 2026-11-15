@@ -4,10 +4,14 @@ import { GlobalOverlaysComponent } from "@/components/global-overlays/global-ove
 import { OwnerAccountMenuComponent } from "@/components/owner-account-menu/owner-account-menu.component";
 import { StudentAccountMenuComponent } from "@/components/student-account-menu/student-account-menu.component";
 import { ToastComponent } from "@/components/toast/toast.component";
+import { CreatedCategories } from "@/helpers/created-categories";
 import { CreatedPrograms } from "@/helpers/created-programs";
+import { buildCoachingCategory } from "@/helpers/data/coaching-category.factory";
+import type { CoachingCategoryData } from "@/helpers/data/coaching-category.factory";
 import { buildCoachingProgram } from "@/helpers/data/coaching-program.factory";
 import type { CoachingProgramData } from "@/helpers/data/coaching-program.factory";
 import { LoginPage } from "@/pages/auth/login/login.page";
+import { CoachingCategoryListPage } from "@/pages/owner/coaching-category-list/coaching-category-list.page";
 import { CoachingProgramCreatePage } from "@/pages/owner/coaching-program-create/coaching-program-create.page";
 import { CoachingProgramEditPage } from "@/pages/owner/coaching-program-edit/coaching-program-edit.page";
 import { CoachingProgramListPage } from "@/pages/owner/coaching-program-list/coaching-program-list.page";
@@ -17,6 +21,9 @@ import { StudentDashboardPage } from "@/pages/student/dashboard/student-dashboar
 interface ProjectFixtures {
   loginPage: LoginPage;
   createdPrograms: CreatedPrograms;
+  createdCategories: CreatedCategories;
+  coachingCategoryListPage: CoachingCategoryListPage;
+  createCategory: (options?: { withImage?: boolean }) => Promise<CoachingCategoryData>;
   createProgram: (overrides?: Partial<CoachingProgramData>) => Promise<CoachingProgramData>;
   coachingProgramListPage: CoachingProgramListPage;
   coachingProgramCreatePage: CoachingProgramCreatePage;
@@ -56,6 +63,35 @@ export const test = base.extend<ProjectFixtures>({
       await listPage.open();
       await listPage.deleteProgram(title);
     }
+  },
+
+  /* Same idea for categories: deletes the ones a test created and that still exist, even after a failure. */
+  createdCategories: async ({ page }, use) => {
+    const createdCategories = new CreatedCategories();
+    await use(createdCategories);
+    const listPage = new CoachingCategoryListPage(page, createdCategories);
+    for (const name of [...createdCategories.names]) {
+      await listPage.open();
+      await listPage.deleteCategory(name);
+    }
+  },
+
+  coachingCategoryListPage: async ({ page, createdCategories }, use) => {
+    await use(new CoachingCategoryListPage(page, createdCategories));
+  },
+
+  /*
+   * Makes a category that the test needs as its starting point and returns the data it was made from.
+   * The category gets a stock image only when asked.
+   */
+  createCategory: async ({ coachingCategoryListPage }, use) => {
+    await use(async (options = {}) => {
+      const data = buildCoachingCategory();
+      await coachingCategoryListPage.open();
+      if (options.withImage) await coachingCategoryListPage.createCategoryWithImage(data.name);
+      else await coachingCategoryListPage.createCategory(data.name);
+      return data;
+    });
   },
 
   coachingProgramListPage: async ({ page, createdPrograms }, use) => {

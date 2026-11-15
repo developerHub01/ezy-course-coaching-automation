@@ -2,12 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Spec file | not written yet (waiting for your decision and approval) |
+| Spec file | `src/tests/owner/coaching-program-management/coaching-program-management.spec.ts` |
 | Playwright project | `owner` (reuses the saved owner session) |
 | Role | owner |
-| Feature tags | `@coaching`, `@coaching-program-management` (PROPOSED, not yet in `tags.ts`) |
+| Feature tags | `@coaching`, `@coaching-program-management` |
 | Area code | COACH |
-| Overall status | Draft |
+| Overall status | Automated |
 
 ## Scope
 What an owner does with programs that already exist, on **Coaching > Coaching Programs**: delete, search by title,
@@ -31,14 +31,14 @@ opening them), categories, Library, quiz submissions, the student side.
 
 | ID | Title | Type | Group | Suites | Priority | Status |
 |---|---|---|---|---|---|---|
-| TC-COACH-102 | Owner deletes a program | positive | Functional | regression | P1 | Draft |
-| TC-COACH-103 | Owner cancels deleting a program | negative | Functional | regression | P1 | Draft |
-| TC-COACH-104 | Owner finds a program by searching its title | positive | Functional | regression | P1 | Draft |
-| TC-COACH-105 | Owner filters programs by category and session type, then clears the filters | positive | Functional | regression | P2 | Draft |
-| TC-COACH-106 | The row menu offers its six actions | positive | UI | regression | P2 | Draft |
-| TC-COACH-112 | Search with no match shows the empty message | negative | Validation | regression | P2 | Draft |
+| TC-COACH-102 | Owner deletes a program | positive | Functional | regression | P1 | Automated |
+| TC-COACH-103 | Owner cancels deleting a program | negative | Functional | regression | P1 | Automated |
+| TC-COACH-104 | Owner finds a program by searching its title | positive | Functional | regression | P1 | Automated |
+| TC-COACH-105 | Owner filters programs by category and session type, then clears the filters | positive | Functional | regression | P2 | Automated |
+| TC-COACH-106 | The row menu offers its six actions | positive | UI | regression | P2 | Automated |
+| TC-COACH-112 | Search with no match shows the empty message | negative | Validation | regression | P2 | Automated |
 
-Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
+Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`. All cases below were approved by the human on 2026-11-15 and have a passing spec.
 
 ---
 
@@ -49,7 +49,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-management
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Deleting must really remove the program, not only hide a row.
 
 **Test data**
@@ -78,7 +78,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-management
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Answering **No** must never delete anything.
 
 **Test data**
@@ -106,7 +106,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-management
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** On a tenant with over a thousand programs, search is the only way to reach one.
 
 **Test data**
@@ -134,7 +134,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-management, coaching-type
 - **Priority:** P2
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** The two filters narrow the list and **Clear Filters** brings the full list back.
 
 **Test data**
@@ -168,7 +168,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-management
 - **Priority:** P2
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Every action an owner needs on a program is reachable from its row.
 
 **Test data**
@@ -195,7 +195,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-management
 - **Priority:** P2
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** A search that finds nothing must say so instead of showing a broken list.
 
 **Steps**

@@ -2,12 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Spec file | `src/tests/owner/coaching-program-edit/coaching-program-edit.spec.ts` (not written yet) |
+| Spec file | `src/tests/owner/coaching-program-edit/coaching-program-edit.spec.ts` |
 | Playwright project | `owner` (reuses the saved owner session) |
 | Role | owner |
-| Feature tags | `@coaching`, `@coaching-program-edit`, `@coaching-type`, `@coaching-access`, `@one-to-one-booking`, `@coaching-after-checkout` (`@coaching-program-edit` is PROPOSED, not yet in `tags.ts`) |
+| Feature tags | `@coaching`, `@coaching-program-edit`, `@coaching-type`, `@coaching-access`, `@one-to-one-booking`, `@coaching-after-checkout` |
 | Area code | COACH |
-| Overall status | Draft |
+| Overall status | Automated |
 
 ## Scope
 Changing a program that already exists, from its row menu **Edit** (the edit form, tab **Details**) plus the
@@ -39,20 +39,20 @@ side of an edit.
 
 | ID | Title | Type | Group | Suites | Priority | Status |
 |---|---|---|---|---|---|---|
-| TC-COACH-201 | Owner edits the basic details of a program | positive | Functional | smoke, regression | P1 | Draft |
-| TC-COACH-202 | Owner edits the Week Based settings of a program | positive | Functional | regression | P1 | Draft |
-| TC-COACH-203 | Owner edits the Continuous settings of a program | positive | Functional | regression | P1 | Draft |
-| TC-COACH-204 | Owner edits the booking settings of a One to One program | positive | Functional | regression | P1 | Draft |
-| TC-COACH-205 | Owner replaces the feature and banner images | positive | Functional | regression | P2 | Draft |
-| TC-COACH-206 | Owner changes the After Checkout page to an external address | positive | Functional | regression | P1 | Draft |
-| TC-COACH-207 | Owner resets the After Checkout page to the default | positive | Functional | regression | P1 | Draft |
-| TC-COACH-208 | Saving a form without changes keeps every value | positive | Functional | regression | P1 | Draft |
-| TC-COACH-209 | Back without saving discards the changes | negative | Functional | regression | P1 | Draft |
-| TC-COACH-210 | Each coaching type's edit form locks the type and offers the right tabs | positive | UI | regression | P1 | Draft |
-| TC-COACH-220 | Required fields on edit show their messages | negative | Validation | regression | P1 | Draft |
-| TC-COACH-221 | A Title of only spaces is not saved | negative | Validation | regression | P1 | Draft |
+| TC-COACH-201 | Owner edits the basic details of a program | positive | Functional | smoke, regression | P1 | Automated |
+| TC-COACH-202 | Owner edits the Week Based settings of a program | positive | Functional | regression | P1 | Automated |
+| TC-COACH-203 | Owner edits the Continuous settings of a program | positive | Functional | regression | P1 | Automated |
+| TC-COACH-204 | Owner edits the booking settings of a One to One program | positive | Functional | regression | P1 | Automated |
+| TC-COACH-205 | Owner replaces the feature and banner images | positive | Functional | regression | P2 | Automated |
+| TC-COACH-206 | Owner changes the After Checkout page to an external address | positive | Functional | regression | P1 | Automated |
+| TC-COACH-207 | Owner resets the After Checkout page to the default | positive | Functional | regression | P1 | Automated |
+| TC-COACH-208 | Saving a form without changes keeps every value | positive | Functional | regression | P1 | Automated |
+| TC-COACH-209 | Back without saving discards the changes | negative | Functional | regression | P1 | Automated |
+| TC-COACH-210 | Each coaching type's edit form locks the type and offers the right tabs | positive | UI | regression | P1 | Automated |
+| TC-COACH-220 | Required fields on edit show their messages | negative | Validation | regression | P1 | Automated |
+| TC-COACH-221 | A Title of only spaces is not saved | negative | Validation | regression | P1 | Automated |
 
-Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
+Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`. All cases below were approved by the human on 2026-11-15 and have a passing spec.
 
 ---
 
@@ -63,7 +63,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** smoke, regression
 - **Feature tags:** coaching, coaching-program-edit, coaching-access
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Every basic detail an owner changes must be saved and shown again, in the form and in the list.
 
 **Test data**
@@ -95,7 +95,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-edit, coaching-type
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Each Week Based setting can be switched in both directions and stays switched.
 
 **Test data**
@@ -124,7 +124,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-edit, coaching-type
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** The Continuous-only setting (enrolment in the current batch) saves together with the shared ones.
 
 **Test data**
@@ -153,7 +153,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-edit, coaching-type, one-to-one-booking
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Booking settings drive what students can buy, so every one of them must save.
 
 **Test data**
@@ -183,7 +183,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-edit
 - **Priority:** P2
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Replacing an image (delete, then choose another from the Gallery) must not leave the program without one.
 
 **Test data**
@@ -213,7 +213,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-edit, coaching-after-checkout
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Students are sent to the page the owner chose, so a change here must save.
 
 **Test data**
@@ -243,7 +243,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-edit, coaching-after-checkout
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Removing a custom After Checkout page must really remove it, not only on screen.
 
 **Test data**
@@ -271,7 +271,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-edit, coaching-access, coaching-type, coaching-after-checkout
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Re-saving what the owner never touched must not alter anything (a common cause of lost settings).
 
 **Test data**
@@ -299,7 +299,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-edit
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Leaving the form with the back arrow must never save what was typed.
 
 **Test data**
@@ -328,7 +328,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-edit, coaching-type
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** The type cannot change after creation, and the **Drip** tab belongs to Session Based programs only.
 
 **Test data**
@@ -360,7 +360,7 @@ One test per row. Existing program: `buildCoachingProgram({ coachingType: <type>
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-edit
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** An edit must not be able to remove information the create form insists on.
 
 **Test data**
@@ -394,7 +394,7 @@ One test per row. Existing program: `buildCoachingProgram({ coachingType: <type>
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-edit
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** A program must never end up with a blank title.
 
 **Test data**

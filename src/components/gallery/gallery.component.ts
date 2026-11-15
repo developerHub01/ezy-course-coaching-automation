@@ -45,6 +45,13 @@ export class GalleryComponent {
       .waitFor();
   };
 
+  /* Chooses the item at a position of a tab (the first item is position 0). */
+  selectItemAt = async (tab: GalleryTab, position: number): Promise<void> => {
+    await this.showTab(tab);
+    await this.locators.cards().nth(position).click();
+    await this.locators.chosenCards().first().waitFor();
+  };
+
   /* Clicks Select in a field picker and returns once the dialog has closed (the choice was accepted). */
   confirmSelection = async (): Promise<void> => {
     await this.locators.selectButton().click();

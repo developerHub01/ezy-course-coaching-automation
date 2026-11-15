@@ -30,13 +30,14 @@ export const Tag = {
   Authorization: "@authorization",
 
   /*
-   * Coaching feature tags. PROPOSED names, please rename or remove any you do not want.
+   * Coaching feature tags (names approved by the human on 2026-11-15).
    * @coaching-type is on every test that exercises a coaching type, so one command runs them all.
    */
   Coaching: "@coaching",
   CoachingProgramCreation: "@coaching-program-creation",
   CoachingProgramEdit: "@coaching-program-edit",
   CoachingProgramManagement: "@coaching-program-management",
+  CoachingCategory: "@coaching-category",
   CoachingType: "@coaching-type",
   CoachingAccess: "@coaching-access",
   CoachingAfterCheckout: "@coaching-after-checkout",

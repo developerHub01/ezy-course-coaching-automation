@@ -17,7 +17,11 @@ export default defineConfig({
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  /*
+   * Two workers locally. Four browsers loading this slow shared tenant at once made page loads exceed
+   * the timeouts, so a test failed for load, not for a defect.
+   */
+  workers: process.env.CI ? 1 : 2,
   reporter: [
     ["list"],
     [

@@ -5,9 +5,9 @@
 | Spec file | `src/tests/owner/coaching-program-creation/coaching-program-creation.spec.ts` |
 | Playwright project | `owner` (reuses the saved owner session) |
 | Role | owner |
-| Feature tags | `@coaching`, `@coaching-program-creation`, `@coaching-type`, `@coaching-access`, `@one-to-one-booking`, `@coaching-after-checkout` (all PROPOSED, see Open questions) |
+| Feature tags | `@coaching`, `@coaching-program-creation`, `@coaching-type`, `@coaching-access`, `@one-to-one-booking`, `@coaching-after-checkout` |
 | Area code | COACH |
-| Overall status | Draft |
+| Overall status | Automated |
 
 ## Scope
 Creating a coaching program from **Coaching > Coaching Programs > Add New Program**: every coaching type,
@@ -30,25 +30,25 @@ Not covered at all yet: Pricing, Add Coach, categories, Library, quiz submission
 
 | ID | Title | Type | Group | Suites | Priority | Status |
 |---|---|---|---|---|---|---|
-| TC-COACH-001 | Owner creates a Session Based program | positive | Functional | smoke, regression | P1 | Draft |
-| TC-COACH-002 | Owner creates a Week Based program with its extra settings | positive | Functional | regression | P1 | Draft |
-| TC-COACH-003 | Owner creates a Continuous program with its extra settings | positive | Functional | regression | P1 | Draft |
-| TC-COACH-004 | Owner creates an Evergreen program | positive | Functional | regression | P1 | Draft |
-| TC-COACH-005 | Owner creates a One to One program with booking | positive | Functional | regression | P1 | Draft |
-| TC-COACH-006 | Owner creates a One to One program without booking | positive | Functional | regression | P1 | Draft |
-| TC-COACH-007 | Owner sets a page of the site as the After Checkout page | positive | Functional | regression | P1 | Draft |
-| TC-COACH-008 | Owner sets an external address as the After Checkout page | positive | Functional | regression | P1 | Draft |
-| TC-COACH-011 | Each coaching type shows only its own settings | positive | UI | regression | P1 | Draft |
-| TC-COACH-012 | One to One booking settings appear step by step | positive | UI | regression | P1 | Draft |
-| TC-COACH-013 | Access info icons explain Private and Restricted | positive | UI | regression | P2 | Draft |
-| TC-COACH-014 | Submission Visibility info icons explain All and Own | positive | UI | regression | P2 | Draft |
-| TC-COACH-015 | After Checkout link shows where the student will go | positive | UI | regression | P1 | Draft |
-| TC-COACH-021 | Empty form shows every required message | negative | Validation | smoke, regression | P1 | Draft |
-| TC-COACH-022 | Short Description keeps at most 160 characters | negative | Validation | regression | P2 | Draft |
-| TC-COACH-023 | Student Limit cannot go below 1 | negative | Validation | regression | P2 | Draft |
-| TC-COACH-024 | Cancel on the booking warning keeps the form | negative | Validation | regression | P1 | Draft |
+| TC-COACH-001 | Owner creates a Session Based program | positive | Functional | smoke, regression | P1 | Automated |
+| TC-COACH-002 | Owner creates a Week Based program with its extra settings | positive | Functional | regression | P1 | Automated |
+| TC-COACH-003 | Owner creates a Continuous program with its extra settings | positive | Functional | regression | P1 | Automated |
+| TC-COACH-004 | Owner creates an Evergreen program | positive | Functional | regression | P1 | Automated |
+| TC-COACH-005 | Owner creates a One to One program with booking | positive | Functional | regression | P1 | Automated |
+| TC-COACH-006 | Owner creates a One to One program without booking | positive | Functional | regression | P1 | Automated |
+| TC-COACH-007 | Owner sets a page of the site as the After Checkout page | positive | Functional | regression | P1 | Automated |
+| TC-COACH-008 | Owner sets an external address as the After Checkout page | positive | Functional | regression | P1 | Automated |
+| TC-COACH-011 | Each coaching type shows only its own settings | positive | UI | regression | P1 | Automated |
+| TC-COACH-012 | One to One booking settings appear step by step | positive | UI | regression | P1 | Automated |
+| TC-COACH-013 | Access info icons explain Private and Restricted | positive | UI | regression | P2 | Automated |
+| TC-COACH-014 | Submission Visibility info icons explain All and Own | positive | UI | regression | P2 | Automated |
+| TC-COACH-015 | After Checkout link shows where the student will go | positive | UI | regression | P1 | Automated |
+| TC-COACH-021 | Empty form shows every required message | negative | Validation | smoke, regression | P1 | Automated |
+| TC-COACH-022 | Short Description keeps at most 160 characters | negative | Validation | regression | P2 | Automated |
+| TC-COACH-023 | Student Limit cannot go below 1 | negative | Validation | regression | P2 | Automated |
+| TC-COACH-024 | Cancel on the booking warning keeps the form | negative | Validation | regression | P1 | Automated |
 
-Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
+Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`. All cases below were approved by the human on 2026-11-15 and have a passing spec.
 
 ---
 
@@ -59,7 +59,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** smoke, regression
 - **Feature tags:** coaching, coaching-program-creation, coaching-type
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** The main flow must work: an owner can create a program and find it again.
 
 **Test data**
@@ -89,7 +89,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-creation, coaching-type, coaching-access
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Week Based settings (visibility, previous sessions, habit tab) and Private access are saved.
 
 **Test data**
@@ -118,7 +118,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-creation, coaching-type, coaching-access
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Continuous settings, including enrolment in the current batch, and Restricted access are saved.
 
 **Test data**
@@ -147,7 +147,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-creation, coaching-type, coaching-access
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Evergreen, the type with no extra settings, can be created, here with Hidden access.
 
 **Test data**
@@ -175,7 +175,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-creation, coaching-type, one-to-one-booking
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Booking settings of a One to One program are saved.
 
 **Test data**
@@ -204,7 +204,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-creation, coaching-type, one-to-one-booking
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** After the warning, a One to One program can be created without booking, and booking is then locked.
 
 **Test data**
@@ -232,7 +232,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-creation, coaching-after-checkout
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** The page a student lands on after buying must be the one the owner chose.
 
 **Test data**
@@ -262,7 +262,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-creation, coaching-after-checkout
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** An owner can send students to a page outside the site after buying.
 
 **Test data**
@@ -292,7 +292,7 @@ Status values: `Draft` -> `Approved` (only the human sets this) -> `Automated`.
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-creation, coaching-type
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** The form must show the right settings for the chosen type and none of the others.
 
 **Test data**
@@ -325,7 +325,7 @@ None. One test per row of the table below (nothing is submitted).
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-creation, coaching-type, one-to-one-booking
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** Booking options must only appear when they apply, so the owner is not offered options that do nothing.
 
 **Steps**
@@ -352,7 +352,7 @@ None. One test per row of the table below (nothing is submitted).
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-creation, coaching-access
 - **Priority:** P2
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** The form is the only place that explains these Access values, so the explanation must show.
 
 **Steps**
@@ -376,7 +376,7 @@ None. One test per row of the table below (nothing is submitted).
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-creation, coaching-type
 - **Priority:** P2
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** The owner must be told who can see submissions before choosing.
 
 **Steps**
@@ -399,7 +399,7 @@ None. One test per row of the table below (nothing is submitted).
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-creation, coaching-after-checkout
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** The link above the tabs is the only feedback the owner gets, so it must always show the real destination.
 
 **Steps**
@@ -428,7 +428,7 @@ None. One test per row of the table below (nothing is submitted).
 - **Suites:** smoke, regression
 - **Feature tags:** coaching, coaching-program-creation
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** A program must not be created without its required information.
 
 **Steps**
@@ -457,7 +457,7 @@ None. One test per row of the table below (nothing is submitted).
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-creation
 - **Priority:** P2
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** The length limit of the field is enforced.
 
 **Steps**
@@ -479,7 +479,7 @@ None. One test per row of the table below (nothing is submitted).
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-creation
 - **Priority:** P2
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** A program must always allow at least one student.
 
 **Steps**
@@ -502,7 +502,7 @@ None. One test per row of the table below (nothing is submitted).
 - **Suites:** regression
 - **Feature tags:** coaching, coaching-program-creation, coaching-type, one-to-one-booking
 - **Priority:** P1
-- **Status:** Draft
+- **Status:** Automated
 - **Objective:** The warning is the owner's last chance before booking is locked forever, and Cancel must not lose their work.
 
 **Test data**
