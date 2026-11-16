@@ -158,7 +158,7 @@ export class CoachingProgramFormComponent {
   configureBooking = async (booking: CoachingBookingData): Promise<void> => {
     await this.setBookingEnabled(true);
     await this.setFreeSlots(booking.freeSlots);
-    if (booking.freeSlots > 0) {
+    if (booking.freeSlots) {
       await this.selectRenewalCycle(booking.renewalCycle);
       await this.setAllowAdditionalSessions(booking.allowAdditionalSessions);
     }
