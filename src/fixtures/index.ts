@@ -1,6 +1,7 @@
 import { expect, test as base } from "@playwright/test";
 
 import { GlobalOverlaysComponent } from "@/components/global-overlays/global-overlays.component";
+import type { PricingComponent } from "@/components/pricing/pricing.component";
 import { OwnerAccountMenuComponent } from "@/components/owner-account-menu/owner-account-menu.component";
 import { StudentAccountMenuComponent } from "@/components/student-account-menu/student-account-menu.component";
 import { ToastComponent } from "@/components/toast/toast.component";
@@ -16,6 +17,7 @@ import { CoachingProgramCreatePage } from "@/pages/owner/coaching-program-create
 import { CoachingProgramEditPage } from "@/pages/owner/coaching-program-edit/coaching-program-edit.page";
 import { CoachingProgramListPage } from "@/pages/owner/coaching-program-list/coaching-program-list.page";
 import { OwnerDashboardPage } from "@/pages/owner/dashboard/owner-dashboard.page";
+import { PricingPage } from "@/pages/owner/pricing/pricing.page";
 import { StudentDashboardPage } from "@/pages/student/dashboard/student-dashboard.page";
 
 interface ProjectFixtures {
@@ -29,6 +31,8 @@ interface ProjectFixtures {
   coachingProgramCreatePage: CoachingProgramCreatePage;
   coachingProgramEditPage: CoachingProgramEditPage;
   ownerDashboardPage: OwnerDashboardPage;
+  pricingPage: PricingPage;
+  newProgramPricing: () => Promise<PricingComponent>;
   studentDashboardPage: StudentDashboardPage;
   ownerAccountMenu: OwnerAccountMenuComponent;
   studentAccountMenu: StudentAccountMenuComponent;
@@ -122,6 +126,24 @@ export const test = base.extend<ProjectFixtures>({
 
   ownerDashboardPage: async ({ page }, use) => {
     await use(new OwnerDashboardPage(page));
+  },
+
+  pricingPage: async ({ page }, use) => {
+    await use(new PricingPage(page));
+  },
+
+  /*
+   * Makes a coaching program (the program is only the starting point, and createProgram deletes it
+   * after the test), opens its Pricing screen from the list's row menu, and returns the pricing
+   * section ready to use. A new program has no prices.
+   */
+  newProgramPricing: async ({ createProgram, coachingProgramListPage, pricingPage }, use) => {
+    await use(async () => {
+      const program = await createProgram();
+      await coachingProgramListPage.open();
+      await coachingProgramListPage.openPricing(program.title);
+      return pricingPage.pricing;
+    });
   },
 
   studentDashboardPage: async ({ page }, use) => {

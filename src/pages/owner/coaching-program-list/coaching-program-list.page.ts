@@ -1,6 +1,7 @@
 import type { Locator, Page } from "@playwright/test";
 
 import { ConfirmDialogComponent } from "@/components/confirm-dialog/confirm-dialog.component";
+import { PricingComponent } from "@/components/pricing/pricing.component";
 import { SelectDropdownComponent } from "@/components/select-dropdown/select-dropdown.component";
 import { ToastComponent } from "@/components/toast/toast.component";
 import { CoachingProgramMessage } from "@/helpers/coaching-program-messages";
@@ -22,6 +23,7 @@ export class CoachingProgramListPage extends BasePage {
   private readonly toast: ToastComponent;
   private readonly createPage: CoachingProgramCreatePage;
   private readonly editPage: CoachingProgramEditPage;
+  private readonly pricing: PricingComponent;
 
   constructor(
     page: Page,
@@ -34,6 +36,7 @@ export class CoachingProgramListPage extends BasePage {
     this.toast = new ToastComponent(page);
     this.createPage = new CoachingProgramCreatePage(page, createdPrograms);
     this.editPage = new CoachingProgramEditPage(page, createdPrograms);
+    this.pricing = new PricingComponent(page);
   }
 
   /*
@@ -120,6 +123,17 @@ export class CoachingProgramListPage extends BasePage {
     await this.openActionMenu(title);
     await this.locators.menuItem("Edit").click();
     await this.editPage.waitUntilLoaded(title);
+  };
+
+  /*
+   * Opens the program's Pricing screen from its row menu and returns once that screen has drawn its
+   * price list (the empty state or the cards). The screen is the shared pricing section: use the
+   * pricingPage fixture's `pricing` component to work in it.
+   */
+  openPricing = async (title: string): Promise<void> => {
+    await this.openActionMenu(title);
+    await this.locators.menuItem("Pricing").click();
+    await this.pricing.waitUntilLoaded();
   };
 
   /* Deletes a program and returns once the success toast is shown and its row is gone. */

@@ -42,4 +42,13 @@ export const Tag = {
   CoachingAccess: "@coaching-access",
   CoachingAfterCheckout: "@coaching-after-checkout",
   OneToOneBooking: "@one-to-one-booking",
+
+  /*
+   * Pricing feature tags (requested by the human on 2026-11-16). @pricing is on every test that
+   * touches the shared pricing section, whichever product it is on.
+   */
+  Pricing: "@pricing",
+  CoachingPricing: "@coaching-pricing",
+  PricingPlanLimit: "@pricing-plan-limit",
+  PricingValidation: "@pricing-validation",
 } as const;
