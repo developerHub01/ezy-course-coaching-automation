@@ -81,8 +81,7 @@ export class PricingComponent {
     await this.openAddForm();
     const offered: Array<PricingPlanType> = [];
     for (const plan of ALL_PRICING_PLANS)
-      if ((await this.locators.planOption(PRICING_PLAN_LABEL[plan]).count()))
-        offered.push(plan);
+      if (await this.locators.planOption(PRICING_PLAN_LABEL[plan]).count()) offered.push(plan);
     return offered;
   };
 
